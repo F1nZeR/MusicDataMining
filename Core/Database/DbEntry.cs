@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 
 namespace Core.Database
@@ -46,5 +47,20 @@ namespace Core.Database
         /// Эмоции: отрицательное
         /// </summary>
         public double Negative { get; set; }
+
+        /// <summary>
+        /// Дата релиза песни
+        /// </summary>
+        public DateTime? SongDate { get; set; }
+
+        /// <summary>
+        /// Год создания коллектива
+        /// </summary>
+        public DateTime? ArtistBeginYear { get; set; }
+
+        /// <summary>
+        /// Тип артиста (группа, соло или ещё что)
+        /// </summary>
+        public string ArtistType { get; set; }
     }
 }

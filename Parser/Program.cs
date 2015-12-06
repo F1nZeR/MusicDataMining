@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Database;
+using Hqub.MusicBrainz.API.Entities;
 using IF.Lastfm.Core.Objects;
 using MongoDB.Driver;
 
@@ -14,16 +15,118 @@ namespace Parser
         {
             //PopulateDbWithSongsFromLastFm();
             //LoadLyricsForSongs();
-            TestWork();
+            //TestWork();
+            LoadAdditionInfoAboutSongs();
 
             Console.ReadKey();
         }
 
+        private static async void LoadAdditionInfoAboutSongs()
+        {
+            var songs = await DataManager.GetSongsWithLyrics();
+            foreach (var song in songs)
+            {
+                var response = await LastFm.Client.Track.GetInfoAsync(song.SongName, song.ArtistName);
+                if (!response.Success || response.Content.AlbumName == null) continue;
+
+                Artist artist = null;
+                while (artist == null)
+                {
+                    try
+                    {
+                        artist = await Artist.GetAsync(response.Content.ArtistMbid);
+                    }
+                    catch (Exception ex)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(2));
+                    }
+                }
+
+                await Task.Delay(500);
+                var lastAlbum = await LastFm.Client.Album.GetInfoAsync(song.ArtistName, response.Content.AlbumName);
+                Release album = null;
+                while (album == null)
+                {
+                    try
+                    {
+                        var release = await Release.GetAsync(lastAlbum.Content.Mbid);
+                        if (release == null) break;
+                        album = release;
+                    }
+                    catch (Exception ex)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(2));
+                    }
+                }
+
+                DateTime? songDate = null;
+                if (album?.Date != null)
+                {
+                    int year;
+                    if (int.TryParse(album.Date, out year))
+                    {
+                        songDate = new DateTime(year, 1, 1);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            songDate = DateTime.Parse(album.Date);
+                        }
+                        catch (Exception ex)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+
+                DateTime? artistBeginDate = null;
+                if (artist.LifeSpan?.Begin != null)
+                {
+                    int year;
+                    if (int.TryParse(artist.LifeSpan.Begin, out year))
+                    {
+                        artistBeginDate = new DateTime(year, 1, 1);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            artistBeginDate = DateTime.Parse(artist.LifeSpan.Begin);
+                        }
+                        catch (Exception ex)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+
+                var filter = Builders<DbEntry>.Filter.Eq(x => x.Id, song.Id);
+                var updateQuery = Builders<DbEntry>.Update.Set(x => x.ArtistType, artist.ArtistType)
+                    .Set(x => x.ArtistBeginYear, artistBeginDate).Set(x => x.SongDate, songDate);
+                var result = await DataManager.Collection.UpdateOneAsync(filter, updateQuery);
+
+                Console.Out.WriteLine(song.ArtistName + " - " + song.SongName);
+                await Task.Delay(TimeSpan.FromSeconds(2));
+            }
+
+            Console.Out.WriteLine("Done!");
+        }
+
         private static async void TestWork()
         {
-            var response = await LastFm.Client.Track.GetInfoAsync("Omen", "The Prodigy");
-            var album = await LastFm.Client.Album.GetInfoAsync("The Prodigy", response.Content.AlbumName);
-            var album2 = await LastFm.Client.Album.GetInfoByMbidAsync(album.Content.Mbid);
+            var artists = await Artist.SearchAsync("Daft Punk");
+            var artist = artists.First();
+
+            var query = $"aid=({artist.Id}) release=({"One More Time"})";
+            var album = (await Release.SearchAsync(Uri.EscapeUriString(query), 10)).First();
+
+            //var response = await LastFm.Client.Track.GetInfoAsync("One More Time", "Daft Punk");
+            //var album = await LastFm.Client.Album.GetInfoAsync("Daft Punk", "Discovery");
+            //var url = album.Content.Url;
+
+            //var album = await LastFm.Client.Album.GetInfoAsync("Daft Punk", "Discovery");
+            //var album2 = await LastFm.Client.Album.GetInfoByMbidAsync(album.Content.Mbid);
             Console.Out.WriteLine("Done!");
         }
 

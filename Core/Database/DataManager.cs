@@ -44,5 +44,12 @@ namespace Core.Database
             var items = Collection.Find(filter);
             return await items.ToListAsync();
         }
+
+        public static async Task<IEnumerable<DbEntry>> GetSongsWithoutArtistType()
+        {
+            var filter = Builders<DbEntry>.Filter.Eq(x => x.ArtistType, null);
+            var items = Collection.Find(filter);
+            return await items.ToListAsync();
+        }
     }
 }
