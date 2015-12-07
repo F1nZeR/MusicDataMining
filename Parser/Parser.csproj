@@ -77,8 +77,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LastFm.cs" />
-    <Compile Include="LyricsEngine.cs" />
+    <Compile Include="Helpers\LastFm.cs" />
+    <Compile Include="Helpers\LyricsEngine.cs" />
+    <Compile Include="Helpers\StringUtilities.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

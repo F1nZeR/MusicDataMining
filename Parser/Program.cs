@@ -6,6 +6,7 @@ using Core.Database;
 using Hqub.MusicBrainz.API.Entities;
 using IF.Lastfm.Core.Objects;
 using MongoDB.Driver;
+using Parser.Helpers;
 
 namespace Parser
 {
@@ -16,9 +17,24 @@ namespace Parser
             //PopulateDbWithSongsFromLastFm();
             //LoadLyricsForSongs();
             //TestWork();
-            LoadAdditionInfoAboutSongs();
+            //LoadAdditionInfoAboutSongs();
+            UpdateWordsCount();
 
             Console.ReadKey();
+        }
+
+        private static async void UpdateWordsCount()
+        {
+
+            var songs = await DataManager.GetSongsWithLyrics();
+            foreach (var song in songs)
+            {
+                var filter = Builders<DbEntry>.Filter.Eq(x => x.Id, song.Id);
+                var updateQuery = Builders<DbEntry>.Update.Set(x => x.LyricCharsCount, song.Lyrics.Length)
+                    .Set(x => x.LyricWordsCount, StringUtilities.GetWords(song.Lyrics).Length);
+                var result = await DataManager.Collection.UpdateOneAsync(filter, updateQuery);
+            }
+            Console.Out.WriteLine("Done!");
         }
 
         private static async void LoadAdditionInfoAboutSongs()

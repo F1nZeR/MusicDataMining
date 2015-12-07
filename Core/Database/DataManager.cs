@@ -38,6 +38,13 @@ namespace Core.Database
             return await items.ToListAsync();
         }
 
+        public static async Task<IEnumerable<DbEntry>> GetSongsWithoutArtistType()
+        {
+            var filter = Builders<DbEntry>.Filter.Eq(x => x.ArtistType, null);
+            var items = Collection.Find(filter);
+            return await items.ToListAsync();
+        }
+
         public static async Task<IEnumerable<DbEntry>> GetSongsWithLyrics()
         {
             var filter = Builders<DbEntry>.Filter.Ne(x => x.Lyrics, null);
@@ -45,11 +52,23 @@ namespace Core.Database
             return await items.ToListAsync();
         }
 
-        public static async Task<IEnumerable<DbEntry>> GetSongsWithoutArtistType()
+        /// <summary>
+        /// Получить песни для анализа
+        /// </summary>
+        /// <returns></returns>
+        public static List<DbEntry> GetSongsForDataMining()
         {
-            var filter = Builders<DbEntry>.Filter.Eq(x => x.ArtistType, null);
-            var items = Collection.Find(filter);
-            return await items.ToListAsync();
+            var notEmptyLyricsFilter = Builders<DbEntry>.Filter.Ne(x => x.Lyrics, null);
+            var notEmptyArtistTypeFilter = Builders<DbEntry>.Filter.Ne(x => x.ArtistType, null);
+            var notEmptyYear = Builders<DbEntry>.Filter.Ne(x => x.ArtistBeginYear, null);
+            var notEmptyYear2 = Builders<DbEntry>.Filter.Ne(x => x.SongDate, null);
+
+            var resFilter = Builders<DbEntry>.Filter.And(notEmptyLyricsFilter, notEmptyArtistTypeFilter, notEmptyYear,
+                notEmptyYear2);
+            var itemsQuery = Collection.Find(resFilter);
+            var itemsTask = itemsQuery.ToListAsync();
+            itemsTask.Wait();
+            return itemsTask.Result;
         }
     }
 }

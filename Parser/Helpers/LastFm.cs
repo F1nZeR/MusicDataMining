@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using IF.Lastfm.Core.Api;
 
-namespace Parser
+namespace Parser.Helpers
 {
     public class LastFm
     {

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{87636858-E2D7-42B8-9AA5-CC2504DD1610}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgorithmTest", "AlgorithmTest\AlgorithmTest.csproj", "{BADE439C-E5CE-4FC1-AA6B-AC47A4517961}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{87636858-E2D7-42B8-9AA5-CC2504DD1610}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87636858-E2D7-42B8-9AA5-CC2504DD1610}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87636858-E2D7-42B8-9AA5-CC2504DD1610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BADE439C-E5CE-4FC1-AA6B-AC47A4517961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BADE439C-E5CE-4FC1-AA6B-AC47A4517961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BADE439C-E5CE-4FC1-AA6B-AC47A4517961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BADE439C-E5CE-4FC1-AA6B-AC47A4517961}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

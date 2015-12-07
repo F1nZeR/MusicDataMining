@@ -62,5 +62,8 @@ namespace Core.Database
         /// Тип артиста (группа, соло или ещё что)
         /// </summary>
         public string ArtistType { get; set; }
+
+        public int? LyricCharsCount { get; set; }
+        public int? LyricWordsCount { get; set; }
     }
 }
