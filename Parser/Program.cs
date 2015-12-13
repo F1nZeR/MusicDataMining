@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Database;
+using Core.Models;
 using Hqub.MusicBrainz.API.Entities;
 using IF.Lastfm.Core.Objects;
 using MongoDB.Driver;
@@ -14,11 +15,13 @@ namespace Parser
     {
         static void Main(string[] args)
         {
+            var songs = SongsFactory.GetSongsForLearning();
+
             //PopulateDbWithSongsFromLastFm();
             //LoadLyricsForSongs();
             //TestWork();
             //LoadAdditionInfoAboutSongs();
-            UpdateWordsCount();
+            //UpdateWordsCount();
 
             Console.ReadKey();
         }
@@ -39,7 +42,7 @@ namespace Parser
 
         private static async void LoadAdditionInfoAboutSongs()
         {
-            var songs = await DataManager.GetSongsWithLyrics();
+            var songs = await DataManager.GetSongsWithoutArtistType();
             foreach (var song in songs)
             {
                 var response = await LastFm.Client.Track.GetInfoAsync(song.SongName, song.ArtistName);
@@ -178,7 +181,7 @@ namespace Parser
         {
             var curStep = 0;
 
-            var response = await LastFm.Client.Chart.GetTopArtistsAsync(3, 40);
+            var response = await LastFm.Client.Chart.GetTopArtistsAsync(20, 40);
 
             var neededSongs = new List<LastTrack>();
             // исполнители

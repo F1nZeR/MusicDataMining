@@ -54,6 +54,9 @@
   <ItemGroup>
     <Compile Include="Database\DataManager.cs" />
     <Compile Include="Database\DbEntry.cs" />
+    <Compile Include="Models\LearnModel.cs" />
+    <Compile Include="Models\PopularityEnum.cs" />
+    <Compile Include="Models\SongsFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
